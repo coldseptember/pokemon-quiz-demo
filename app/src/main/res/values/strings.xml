@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Pokemon Quiz</string>
-    <string name="search_hint">Search Pokemon</string>
+    <string name="search_hint">Search Pokemon...</string>
     <string name="loading">Loading...</string>
     <string name="no_results">No Pokemon found</string>
     <string name="error_message">Something went wrong</string>
@@ -14,4 +14,14 @@
     <string name="welcome_title">Welcome to Pokemon Quiz</string>
     <string name="search_page">Search</string>
     <string name="detail_page">Detail</string>
+    <string name="search_icon_desc">Search</string>
+    <string name="clear_icon_desc">Clear</string>
+    <string name="placeholder_unknown">?</string>
+    <string name="placeholder_id">--</string>
+    <string name="capture_rate_value">%1$d / 255</string>
+    <string name="unknown">Unknown</string>
+    <string name="app_logo_desc">Pokemon Quiz Logo</string>
+    <string name="error_unknown">Unknown error</string>
+    <string name="back_arrow">←</string>
+    <string name="capture_label">Capture</string>
 </resources>

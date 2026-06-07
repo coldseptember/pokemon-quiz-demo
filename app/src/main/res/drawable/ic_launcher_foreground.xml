@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Pokeball icon, centered in the adaptive icon viewport -->
+    <item
+        android:drawable="@drawable/pokeball"
+        android:gravity="center" />
+</layer-list>

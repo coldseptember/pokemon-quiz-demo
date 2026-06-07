@@ -2,8 +2,9 @@
 <resources>
     <style name="Theme.PokemonQuiz" parent="android:Theme.Material.Light.NoActionBar">
         <item name="android:statusBarColor">@color/primary</item>
-        <item name="android:navigationBarColor">@color/primary</item>
+        <item name="android:navigationBarColor">@color/nav_bar</item>
         <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowLightNavigationBar">true</item>
     </style>
 
     <style name="Theme.PokemonQuiz.Splash" parent="Theme.PokemonQuiz">

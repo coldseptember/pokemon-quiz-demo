@@ -1,11 +1,20 @@
-# 获取宝可梦详情 - 名称和技能列表
+# 获取宝可梦详情 - 全量信息（按物种 ID 查询）
 query PokemonDetail($id: Int!) {
-  pokemon_v2_pokemon(where: { id: { _eq: $id } }) {
+  pokemon_v2_pokemonspecies(where: { id: { _eq: $id } }, limit: 1) {
     id
     name
-    pokemon_v2_pokemonabilities {
-      pokemon_v2_ability {
-        name
+    capture_rate
+    pokemon_v2_pokemoncolor {
+      name
+    }
+    pokemon_v2_pokemons(order_by: { id: asc }) {
+      id
+      name
+      pokemon_v2_pokemonabilities {
+        is_hidden
+        pokemon_v2_ability {
+          name
+        }
       }
     }
   }

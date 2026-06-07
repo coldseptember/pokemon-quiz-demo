@@ -57,14 +57,13 @@ dependencies {
     // Navigation
     implementation(libs.navigation.compose)
 
-    // Hilt - 依赖注入
+    // Hilt
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
     implementation(libs.hilt.navigation.compose)
 
     // Apollo GraphQL
     implementation(libs.apollo.runtime)
-    implementation(libs.apollo.normalized.cache.sqlite)
 
     // Coroutines
     implementation(libs.kotlinx.coroutines.android)
@@ -73,8 +72,11 @@ dependencies {
     implementation(libs.lifecycle.viewmodel.compose)
     implementation(libs.lifecycle.runtime.compose)
 
-    // Coil - 图片加载
+    // Coil
     implementation(libs.coil.compose)
+
+    // DataStore
+    implementation(libs.datastore.preferences)
 
     // Testing
     testImplementation(libs.junit)
@@ -87,6 +89,6 @@ dependencies {
 apollo {
     service("pokeapi") {
         packageName.set("com.example.pokemonquiz")
-        generateAsInternal.set(true)
+        generateAsInternal.set(false)
     }
 }
