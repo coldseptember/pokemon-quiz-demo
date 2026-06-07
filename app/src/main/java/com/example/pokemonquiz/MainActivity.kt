@@ -1,11 +1,14 @@
 package com.example.pokemonquiz
 
+import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.core.view.WindowCompat
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -18,10 +21,18 @@ import com.example.pokemonquiz.ui.screens.splash.SplashScreen
 import com.example.pokemonquiz.ui.theme.PokemonQuizTheme
 import dagger.hilt.android.AndroidEntryPoint
 
+private const val PREFS_NAME = "app_prefs"
+private const val KEY_SPLASH_SHOWN = "splash_shown"
+
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Read once: skip splash if already shown before
+        val prefs = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        val splashShown = prefs.getBoolean(KEY_SPLASH_SHOWN, false)
+
         WindowCompat.setDecorFitsSystemWindows(window, false)
         window.statusBarColor = Color.TRANSPARENT
         window.navigationBarColor = Color.WHITE
@@ -30,15 +41,25 @@ class MainActivity : ComponentActivity() {
         insetsController.isAppearanceLightNavigationBars = true
         setContent {
             PokemonQuizTheme {
+                val context = LocalContext.current
                 val navController = rememberNavController()
+                val startDest = remember(splashShown) {
+                    if (splashShown) "search" else "splash"
+                }
+
                 NavHost(
                     navController = navController,
-                    startDestination = "splash",
+                    startDestination = startDest,
                     modifier = Modifier.fillMaxSize()
                 ) {
                     composable("splash") {
                         SplashScreen(
                             onSplashFinished = {
+                                // Mark splash as shown so next launch skips it
+                                context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+                                    .edit()
+                                    .putBoolean(KEY_SPLASH_SHOWN, true)
+                                    .apply()
                                 navController.navigate("search") {
                                     popUpTo("splash") { inclusive = true }
                                 }

@@ -40,6 +40,7 @@ android {
 
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 
@@ -74,9 +75,6 @@ dependencies {
 
     // Coil
     implementation(libs.coil.compose)
-
-    // DataStore
-    implementation(libs.datastore.preferences)
 
     // Testing
     testImplementation(libs.junit)

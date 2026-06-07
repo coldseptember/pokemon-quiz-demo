@@ -2,6 +2,7 @@ package com.example.pokemonquiz.di
 
 import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.network.http.HttpNetworkTransport
+import com.example.pokemonquiz.data.LoggingInterceptor
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -19,6 +20,7 @@ object NetworkModule {
             .networkTransport(
                 HttpNetworkTransport.Builder()
                     .serverUrl("https://beta.pokeapi.co/graphql/v1beta")
+                    .addInterceptor(LoggingInterceptor())
                     .build()
             )
             .build()

@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.pokemonquiz.SearchSpeciesQuery
 import com.example.pokemonquiz.data.PokemonRepository
+import com.example.pokemonquiz.util.Config
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -44,6 +45,7 @@ class SearchViewModel @Inject constructor(
     fun onQueryChanged(newQuery: String) {
         Log.d(TAG, "onQueryChanged: $newQuery")
         _uiState.update { it.copy(query = newQuery) }
+        // Cancel old search, wait 400ms before sending new one (debounce)
         searchJob?.cancel()
         searchJob = viewModelScope.launch {
             delay(400)
@@ -55,14 +57,17 @@ class SearchViewModel @Inject constructor(
     fun loadFirstPage() {
         val q = _uiState.value.query
         val name = if (q.isBlank()) "%" else "%$q%"
+        // reset=true: clear old list, start from offset 0
         loadPage(name, offset = 0, reset = true)
     }
 
     fun loadMore() {
         val s = _uiState.value
+        // Skip if already loading or no more data
         if (s.isLoading || !s.canLoadMore) return
         val q = s.query
         val name = if (q.isBlank()) "%" else "%$q%"
+        // reset=false: add new data to existing list
         loadPage(name, offset = s.offset, reset = false)
     }
 
@@ -74,6 +79,7 @@ class SearchViewModel @Inject constructor(
         Log.d(TAG, "loadPage: name=$name, offset=$offset, reset=$reset")
         loadMoreJob?.cancel()
         loadMoreJob = viewModelScope.launch {
+            // Show loading, clear error, optionally reset list
             _uiState.update { 
                 it.copy(
                     isLoading = true, 
@@ -82,14 +88,16 @@ class SearchViewModel @Inject constructor(
                 ) 
             }
             try {
-                val data = repo.searchSpecies(name, limit = 20, offset = offset)
+                val data = repo.searchSpecies(name, limit = Config.PAGE_SIZE, offset = offset)
                 Log.d(TAG, "loadPage success: got ${data.size} items")
                 _uiState.update {
                     it.copy(
                         species = if (reset) data else it.species + data,
                         isLoading = false,
-                        canLoadMore = data.size == 20,
-                        offset = if (reset) 20 else it.offset + data.size,
+                        // Less than page size means we reached the end
+                        canLoadMore = data.size == Config.PAGE_SIZE,
+                        // Move offset forward by the actual items we got
+                        offset = if (reset) Config.PAGE_SIZE else it.offset + data.size,
                     )
                 }
             } catch (e: Exception) {

@@ -6,6 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -52,7 +53,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import com.example.pokemonquiz.R
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import android.widget.Toast
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -74,6 +77,7 @@ fun SearchScreen(
     val focusManager = LocalFocusManager.current
     val context = LocalContext.current
 
+    // When the user scrolls near the bottom, trigger loadMore
     val shouldLoadMore = remember {
         derivedStateOf {
             val lastVisible = listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
@@ -111,10 +115,9 @@ fun SearchScreen(
                             color = Color(0xFFF0F6FC),
                             shape = RoundedCornerShape(28.dp)
                         )
-                        .padding(horizontal = 16.dp),
+                        .padding(horizontal = 12.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    // Search button: gray when empty, blue/clickable when has content
                     val searchInteractionSource = remember { MutableInteractionSource() }
                     val isSearchPressed by searchInteractionSource.collectIsPressedAsState()
                     val searchEnabled = uiState.query.isNotEmpty()
@@ -124,62 +127,76 @@ fun SearchScreen(
                         else -> LightBlueDark
                     }
 
-                    IconButton(
-                        onClick = {
-                            viewModel.loadFirstPage()
-                            focusManager.clearFocus()
-                        },
-                        enabled = searchEnabled,
-                        interactionSource = searchInteractionSource
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Search,
-                            contentDescription = stringResource(R.string.search_icon_desc),
-                            tint = searchTint
-                        )
-                    }
-                    TextField(
+                    // Search icon next to input, no extra IconButton padding
+                    Icon(
+                        imageVector = Icons.Default.Search,
+                        contentDescription = stringResource(R.string.search_icon_desc),
+                        tint = searchTint,
+                        modifier = Modifier
+                            .size(24.dp)
+                            .clickable(
+                                enabled = searchEnabled,
+                                interactionSource = searchInteractionSource,
+                                indication = null,
+                                onClick = {
+                                    viewModel.loadFirstPage()
+                                    focusManager.clearFocus()
+                                }
+                            )
+                    )
+
+                    Spacer(modifier = Modifier.width(8.dp))
+
+                    // BasicTextField for full control over vertical centering
+                    BasicTextField(
                         value = uiState.query,
                         onValueChange = { viewModel.onQueryChanged(it) },
-                        modifier = Modifier
-                            .weight(1f),
-                        placeholder = {
-                            Text(
-                                stringResource(R.string.search_hint),
-                                color = Color(0xFF90A4AE)
-                            )
-                        },
-                        colors = TextFieldDefaults.colors(
-                            focusedContainerColor = Color.Transparent,
-                            unfocusedContainerColor = Color.Transparent,
-                            focusedIndicatorColor = Color.Transparent,
-                            unfocusedIndicatorColor = Color.Transparent,
-                            cursorColor = LightBlueDark
-                        ),
+                        modifier = Modifier.weight(1f),
                         singleLine = true,
-                        trailingIcon = {
-                            if (uiState.query.isNotEmpty()) {
-                                val clearInteractionSource = remember { MutableInteractionSource() }
-                                val isClearPressed by clearInteractionSource.collectIsPressedAsState()
-                                val clearTint = if (isClearPressed) Color(0xFF546E7A) else Color(0xFF90A4AE)
-
-                                IconButton(
-                                    onClick = {
-                                        viewModel.onQueryChanged("")
-                                        focusManager.clearFocus()
-                                    },
-                                    interactionSource = clearInteractionSource
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Default.Clear,
-                                        contentDescription = stringResource(R.string.clear_icon_desc),
-                                        tint = clearTint,
-                                        modifier = Modifier.size(20.dp)
+                        textStyle = TextStyle(
+                            fontSize = 16.sp,
+                            color = Color(0xFF1A1A2E)
+                        ),
+                        cursorBrush = androidx.compose.ui.graphics.SolidColor(LightBlueDark),
+                        decorationBox = { innerTextField ->
+                            Box(
+                                modifier = Modifier.fillMaxWidth(),
+                                contentAlignment = Alignment.CenterStart
+                            ) {
+                                if (uiState.query.isEmpty()) {
+                                    Text(
+                                        stringResource(R.string.search_hint),
+                                        color = Color(0xFF90A4AE),
+                                        fontSize = 16.sp
                                     )
                                 }
+                                innerTextField()
                             }
                         }
                     )
+
+                    // Clear button
+                    if (uiState.query.isNotEmpty()) {
+                        val clearInteractionSource = remember { MutableInteractionSource() }
+                        val isClearPressed by clearInteractionSource.collectIsPressedAsState()
+                        val clearTint = if (isClearPressed) Color(0xFF546E7A) else Color(0xFF90A4AE)
+
+                        IconButton(
+                            onClick = {
+                                viewModel.onQueryChanged("")
+                                focusManager.clearFocus()
+                            },
+                            interactionSource = clearInteractionSource,
+                            modifier = Modifier.size(36.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Clear,
+                                contentDescription = stringResource(R.string.clear_icon_desc),
+                                tint = clearTint,
+                                modifier = Modifier.size(20.dp)
+                            )
+                        }
+                    }
                 }
             }
         }
@@ -229,6 +246,7 @@ fun ImprovedSpeciesItem(
     species: SearchSpeciesQuery.Pokemon_v2_pokemonspecy,
     onClick: () -> Unit
 ) {
+    // CDN image url: pad species id to 3 digits (e.g. 681 -> 001)
     val spriteUrl = "https://assets.pokemon.com/assets/cms2/img/pokedex/full/${species.id.toString().padStart(3, '0')}.png"
     val pokemonNames = species.pokemon_v2_pokemons.mapNotNull { it.name }
     val colorName = species.pokemon_v2_pokemoncolor?.name ?: "white"
@@ -383,7 +401,7 @@ fun ImprovedSpeciesItem(
     }
 }
 
-/** Map pokemon color name to light background color */
+/** Map Pokemon color name to a light background color for the card */
 private fun pokemonColorToBg(colorName: String): Color = when (colorName.lowercase()) {
     "black" -> Color(0xFF5C6BC0)
     "blue" -> Color(0xFF64B5F6)
@@ -398,7 +416,7 @@ private fun pokemonColorToBg(colorName: String): Color = when (colorName.lowerca
     else -> Color(0xFFF5F5F5)
 }
 
-/** Map pokemon color name to darker accent for progress bar etc. */
+/** Map Pokemon color name to a darker color for the progress bar */
 private fun pokemonColorToAccent(colorName: String): Color = when (colorName.lowercase()) {
     "black" -> Color(0xFF303F9F)
     "blue" -> Color(0xFF1976D2)

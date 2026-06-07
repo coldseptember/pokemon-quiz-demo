@@ -46,6 +46,8 @@ class DetailViewModel @Inject constructor(
             try {
                 val species = repo.getPokemonDetail(speciesId)
                 Log.d(TAG, "loadDetail: got species=${species?.name}")
+                // Extract abilities from nested data:
+                // species -> pokemons -> pokemonAbilities -> ability
                 val abilities = species?.pokemon_v2_pokemons
                     ?.flatMap { it.pokemon_v2_pokemonabilities ?: emptyList() }
                     ?.mapNotNull { it.pokemon_v2_ability }

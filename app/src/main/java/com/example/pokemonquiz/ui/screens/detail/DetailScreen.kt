@@ -19,7 +19,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -131,6 +130,7 @@ fun DetailContent(
                 .padding(vertical = 24.dp),
             contentAlignment = Alignment.Center
         ) {
+            // CDN image url: pad species id to 3 digits (e.g. 25 -> 025.png)
             val spriteUrl = species?.id?.let {
                 "https://assets.pokemon.com/assets/cms2/img/pokedex/full/${it.toString().padStart(3, '0')}.png"
             }
@@ -231,12 +231,23 @@ fun DetailContent(
                         fontWeight = FontWeight.Medium
                     )
                     Spacer(modifier = Modifier.height(8.dp))
-                    LinearProgressIndicator(
-                        progress = { rate / 255f },
-                        modifier = Modifier.fillMaxWidth(),
-                        color = LightBlue,
-                        trackColor = LightBlue.copy(alpha = 0.2f)
-                    )
+                    // Custom progress bar matching list item style
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(6.dp)
+                            .clip(RoundedCornerShape(3.dp))
+                            .background(LightBlue.copy(alpha = 0.15f))
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                // Fill width based on capture rate (max 255)
+                                .fillMaxWidth(fraction = rate / 255f)
+                                .height(6.dp)
+                                .clip(RoundedCornerShape(3.dp))
+                                .background(LightBlue)
+                        )
+                    }
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
                         text = stringResource(R.string.capture_rate_value, rate),

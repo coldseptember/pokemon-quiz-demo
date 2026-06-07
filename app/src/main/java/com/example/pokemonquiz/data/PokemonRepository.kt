@@ -33,6 +33,7 @@ class PokemonRepository @Inject constructor(
             Log.d(TAG, "searchSpecies: got ${data.size} results")
             data
         } catch (e: ApolloException) {
+            // Network or server error, return empty to avoid crash
             Log.e(TAG, "searchSpecies: ApolloException for name=$name", e)
             emptyList()
         } catch (e: Exception) {
@@ -79,6 +80,7 @@ class PokemonRepository @Inject constructor(
             Log.d(TAG, "getPokemonDetail: got ${if (data != null) "data" else "null"}")
             data
         } catch (e: ApolloException) {
+            // Network or server error, return null so UI can show error state
             Log.e(TAG, "getPokemonDetail: ApolloException for id=$id", e)
             null
         } catch (e: Exception) {
