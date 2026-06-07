@@ -1,0 +1,22 @@
+# 搜索宝可梦物种 - 按名称模糊搜索
+query SearchSpecies($name: String!, $limit: Int!, $offset: Int!) {
+  pokemon_v2_pokemonspecies(
+    where: { name: { _ilike: $name } }
+    limit: $limit
+    offset: $offset
+    order_by: { name: asc }
+  ) {
+    id
+    name
+    capture_rate
+    pokemon_v2_pokemoncolor {
+      name
+    }
+    pokemon_v2_pokemons(
+      order_by: { name: asc }
+    ) {
+      id
+      name
+    }
+  }
+}

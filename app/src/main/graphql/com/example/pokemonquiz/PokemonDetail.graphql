@@ -1,0 +1,12 @@
+# 获取宝可梦详情 - 名称和技能列表
+query PokemonDetail($id: Int!) {
+  pokemon_v2_pokemon(where: { id: { _eq: $id } }) {
+    id
+    name
+    pokemon_v2_pokemonabilities {
+      pokemon_v2_ability {
+        name
+      }
+    }
+  }
+}

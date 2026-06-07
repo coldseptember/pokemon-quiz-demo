@@ -1,0 +1,188 @@
+# PokeAPI GraphQL Schema - Pokemon Species Query
+# 查询宝可梦物种：支持模糊搜索、分页、颜色、捕获率、宝可梦列表等
+
+schema {
+  query: query_root
+}
+
+type query_root {
+  pokemon_v2_pokemonspecies(
+    order_by: [pokemon_v2_pokemonspecies_order_by!]
+    where: pokemon_v2_pokemonspecies_bool_exp
+    limit: Int
+    offset: Int
+  ): [pokemon_v2_pokemonspecies!]!
+  pokemon_v2_pokemonspecies_aggregate(
+    where: pokemon_v2_pokemonspecies_bool_exp
+  ): pokemon_v2_pokemonspecies_aggregate!
+  pokemon_v2_pokemon(
+    where: pokemon_v2_pokemon_bool_exp
+  ): [pokemon_v2_pokemon!]!
+}
+
+type pokemon_v2_pokemonspecies {
+  id: Int!
+  name: String!
+  capture_rate: Int!
+  base_happiness: Int
+  is_baby: Boolean
+  is_legendary: Boolean
+  is_mythical: Boolean
+  generation_id: Int
+  evolves_from_species_id: Int
+  pokemon_v2_pokemoncolor: pokemon_v2_pokemoncolor
+  pokemon_v2_pokemons(
+    order_by: [pokemon_v2_pokemon_order_by!]
+    where: pokemon_v2_pokemon_bool_exp
+    limit: Int
+  ): [pokemon_v2_pokemon!]!
+  pokemon_v2_pokemonspeciesnames(
+    where: pokemon_v2_pokemonspeciesname_bool_exp
+  ): [pokemon_v2_pokemonspeciesname!]!
+}
+
+type pokemon_v2_pokemonspecies_aggregate {
+  aggregate: pokemon_v2_pokemonspecies_aggregate_fields
+}
+
+type pokemon_v2_pokemonspecies_aggregate_fields {
+  count(columns: [pokemon_v2_pokemonspecies_select_column!]): Int!
+}
+
+type pokemon_v2_pokemoncolor {
+  id: Int!
+  name: String!
+}
+
+type pokemon_v2_pokemon {
+  id: Int!
+  name: String!
+  pokemon_species_id: Int
+  height: Int
+  weight: Int
+  base_experience: Int
+  order: Int
+  pokemon_v2_pokemonabilities(
+    where: pokemon_v2_pokemonability_bool_exp
+  ): [pokemon_v2_pokemonability!]!
+  pokemon_v2_pokemontypes: [pokemon_v2_pokemontype!]!
+  pokemon_v2_pokemonsprites: [pokemon_v2_pokemonsprites!]!
+}
+
+type pokemon_v2_pokemonability {
+  id: Int!
+  pokemon_id: Int!
+  ability_id: Int!
+  slot: Int!
+  is_hidden: Boolean!
+  pokemon_v2_ability: pokemon_v2_ability!
+}
+
+type pokemon_v2_ability {
+  id: Int!
+  name: String!
+}
+
+type pokemon_v2_pokemontype {
+  id: Int!
+  pokemon_id: Int!
+  type_id: Int!
+  slot: Int
+  pokemon_v2_type: pokemon_v2_type!
+}
+
+type pokemon_v2_type {
+  id: Int!
+  name: String!
+}
+
+type pokemon_v2_pokemonsprites {
+  id: Int!
+  pokemon_id: Int
+  sprites: jsonb
+}
+
+type pokemon_v2_pokemonspeciesname {
+  id: Int!
+  pokemon_species_id: Int
+  language_id: Int!
+  name: String!
+  genus: String
+}
+
+scalar jsonb
+
+# ========== WHERE inputs ==========
+
+input pokemon_v2_pokemonspecies_bool_exp {
+  _and: [pokemon_v2_pokemonspecies_bool_exp!]
+  _or: [pokemon_v2_pokemonspecies_bool_exp!]
+  _not: pokemon_v2_pokemonspecies_bool_exp
+  id: Int_comparison_exp
+  name: String_comparison_exp
+  capture_rate: Int_comparison_exp
+}
+
+input pokemon_v2_pokemon_bool_exp {
+  _and: [pokemon_v2_pokemon_bool_exp!]
+  _or: [pokemon_v2_pokemon_bool_exp!]
+  _not: pokemon_v2_pokemon_bool_exp
+  id: Int_comparison_exp
+  name: String_comparison_exp
+  pokemon_species_id: Int_comparison_exp
+}
+
+input pokemon_v2_pokemonability_bool_exp {
+  slot: Int_comparison_exp
+  pokemon_v2_ability: pokemon_v2_ability_bool_exp
+}
+
+input pokemon_v2_ability_bool_exp {
+  name: String_comparison_exp
+}
+
+input pokemon_v2_pokemonspeciesname_bool_exp {
+  language_id: Int_comparison_exp
+}
+
+input String_comparison_exp {
+  _eq: String
+  _ilike: String
+  _iregex: String
+  _like: String
+}
+
+input Int_comparison_exp {
+  _eq: Int
+  _gt: Int
+  _gte: Int
+  _lt: Int
+  _lte: Int
+}
+
+# ========== ORDER BY ==========
+
+input pokemon_v2_pokemonspecies_order_by {
+  id: order_by
+  name: order_by
+  capture_rate: order_by
+}
+
+input pokemon_v2_pokemon_order_by {
+  id: order_by
+  name: order_by
+}
+
+enum order_by {
+  asc
+  asc_nulls_first
+  asc_nulls_last
+  desc
+  desc_nulls_first
+  desc_nulls_last
+}
+
+enum pokemon_v2_pokemonspecies_select_column {
+  id
+  name
+}

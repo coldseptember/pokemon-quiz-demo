@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Pokemon Quiz</string>
+    <string name="search_hint">Search Pokemon</string>
+    <string name="loading">Loading...</string>
+    <string name="no_results">No Pokemon found</string>
+    <string name="error_message">Something went wrong</string>
+    <string name="retry">Retry</string>
+    <string name="back">Back</string>
+    <string name="capture_rate">Capture Rate</string>
+    <string name="abilities">Abilities</string>
+    <string name="pokemon_list">Pokemon List</string>
+    <string name="search_label">Search Pokemon species by name</string>
+    <string name="welcome_title">Welcome to Pokemon Quiz</string>
+    <string name="search_page">Search</string>
+    <string name="detail_page">Detail</string>
+</resources>

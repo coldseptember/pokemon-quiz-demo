@@ -4,6 +4,10 @@ build/
 
 # Local configuration file (sdk path, etc)
 local.properties
+gradle.properties.local
+
+# Gradle wrapper downloads
+gradle/wrapper/dists/
 
 # Log/OS Files
 *.log

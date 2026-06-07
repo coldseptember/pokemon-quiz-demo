@@ -1,0 +1,21 @@
+# 获取默认物种列表 - 搜索框为空时默认加载
+query SpeciesList($limit: Int!, $offset: Int!) {
+  pokemon_v2_pokemonspecies(
+    limit: $limit
+    offset: $offset
+    order_by: { name: asc }
+  ) {
+    id
+    name
+    capture_rate
+    pokemon_v2_pokemoncolor {
+      name
+    }
+    pokemon_v2_pokemons(
+      order_by: { name: asc }
+    ) {
+      id
+      name
+    }
+  }
+}
