@@ -11,6 +11,8 @@ gradle/wrapper/dists/
 
 # Log/OS Files
 *.log
+.DS_Store
+**/.DS_Store
 
 # Android Studio generated files and folders
 captures/
