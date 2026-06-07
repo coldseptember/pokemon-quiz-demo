@@ -46,9 +46,20 @@ class DetailViewModel @Inject constructor(
             try {
                 val species = repo.getPokemonDetail(speciesId)
                 Log.d(TAG, "loadDetail: got species=${species?.name}")
+                if (species == null) {
+                    _uiState.update {
+                        it.copy(
+                            species = null,
+                            abilities = emptyList(),
+                            isLoading = false,
+                            error = "Pokemon detail not found"
+                        )
+                    }
+                    return@launch
+                }
                 // Extract abilities from nested data:
                 // species -> pokemons -> pokemonAbilities -> ability
-                val abilities = species?.pokemon_v2_pokemons
+                val abilities = species.pokemon_v2_pokemons
                     ?.flatMap { it.pokemon_v2_pokemonabilities ?: emptyList() }
                     ?.mapNotNull { it.pokemon_v2_ability }
                     ?: emptyList()

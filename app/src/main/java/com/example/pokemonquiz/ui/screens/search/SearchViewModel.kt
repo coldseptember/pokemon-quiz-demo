@@ -97,7 +97,7 @@ class SearchViewModel @Inject constructor(
                         // Less than page size means we reached the end
                         canLoadMore = data.size == Config.PAGE_SIZE,
                         // Move offset forward by the actual items we got
-                        offset = if (reset) Config.PAGE_SIZE else it.offset + data.size,
+                        offset = if (reset) data.size else it.offset + data.size,
                     )
                 }
             } catch (e: Exception) {
